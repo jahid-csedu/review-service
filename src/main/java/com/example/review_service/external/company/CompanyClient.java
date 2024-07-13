@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CompanyClient {
     private final RestTemplate restTemplate;
-    private static final String COMPANY_URL = "http://localhost:8082/companies";
+    private static final String COMPANY_URL = "http://COMPANY-SERVICE/companies";
 
     public Map<Long, CompanyDto> getCompanies() {
         ResponseEntity<CompanyDto[]> companies = restTemplate.getForEntity(COMPANY_URL, CompanyDto[].class);

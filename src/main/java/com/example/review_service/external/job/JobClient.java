@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JobClient {
     private final RestTemplate restTemplate;
-    private static final String JOB_URL = "http://localhost:8081/jobs";
+    private static final String JOB_URL = "http://JOB-SERVICE/jobs";
 
     public Map<Long, JobDto> getJobs() {
         ResponseEntity<JobDto[]> jobs = restTemplate.getForEntity(JOB_URL, JobDto[].class);
