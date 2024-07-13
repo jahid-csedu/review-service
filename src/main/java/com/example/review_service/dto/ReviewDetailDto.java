@@ -1,4 +1,4 @@
-package com.example.review_service.review;
+package com.example.review_service.dto;
 
 import com.example.review_service.external.company.CompanyDto;
 import com.example.review_service.external.job.JobDto;

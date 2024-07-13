@@ -1,5 +1,8 @@
-package com.example.review_service.review;
+package com.example.review_service.mapper;
 
+import com.example.review_service.dto.ReviewDetailDto;
+import com.example.review_service.dto.ReviewDto;
+import com.example.review_service.review.Review;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

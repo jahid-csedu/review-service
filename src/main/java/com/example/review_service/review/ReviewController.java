@@ -1,5 +1,7 @@
 package com.example.review_service.review;
 
+import com.example.review_service.dto.ReviewDetailDto;
+import com.example.review_service.dto.ReviewDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

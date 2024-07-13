@@ -2,8 +2,11 @@ package com.example.review_service.review;
 
 import com.example.review_service.external.company.CompanyClient;
 import com.example.review_service.external.company.CompanyDto;
+import com.example.review_service.dto.ReviewDetailDto;
+import com.example.review_service.dto.ReviewDto;
 import com.example.review_service.external.job.JobClient;
 import com.example.review_service.external.job.JobDto;
+import com.example.review_service.mapper.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
