@@ -1,9 +1,9 @@
 package com.example.review_service.review;
 
-import com.example.review_service.external.company.CompanyClient;
-import com.example.review_service.external.company.CompanyDto;
 import com.example.review_service.dto.ReviewDetailDto;
 import com.example.review_service.dto.ReviewDto;
+import com.example.review_service.external.company.CompanyClient;
+import com.example.review_service.external.company.CompanyDto;
 import com.example.review_service.external.job.JobClient;
 import com.example.review_service.external.job.JobDto;
 import com.example.review_service.mapper.ReviewMapper;
@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,16 +47,13 @@ public class ReviewService {
 
     public void delete(Long id) {
         log.debug("Deleting review by ID: {}", id);
-        Review review = reviewRepository.findById(id).orElse(null);
-        if (review != null) {
-            reviewRepository.deleteById(id);
-        }
+        reviewRepository.findById(id).ifPresent(review -> reviewRepository.deleteById(id));
     }
 
     public ReviewDetailDto findById(Long id) {
         log.debug("Getting reviewOptional by ID: {}", id);
         Optional<Review> reviewOptional = reviewRepository.findById(id);
-        if(reviewOptional.isEmpty()) {
+        if (reviewOptional.isEmpty()) {
             return null;
         }
         Review review = reviewOptional.get();
@@ -80,7 +80,10 @@ public class ReviewService {
     }
 
     private void addJobDetails(List<ReviewDetailDto> reviewDetailDtos) {
-        Map<Long, JobDto> jobs = jobClient.getJobs();
+        List<JobDto> jobResponse = jobClient.getAllJobs();
+        Map<Long, JobDto> jobs = Objects.requireNonNull(jobResponse).stream()
+                .collect(Collectors.toMap(JobDto::getId, Function.identity()));
+
         reviewDetailDtos
                 .forEach(review -> review.setJob(jobs.get(review.getId())));
     }

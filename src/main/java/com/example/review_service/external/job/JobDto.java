@@ -9,7 +9,6 @@ public class JobDto {
     private Long id;
     private String title;
     private String description;
-    private Long companyId;
     private BigDecimal minSalary;
     private BigDecimal maxSalary;
     private String location;

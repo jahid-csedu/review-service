@@ -1,32 +1,18 @@
 package com.example.review_service.external.job;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class JobClient {
-    private final RestTemplate restTemplate;
-    private static final String JOB_URL = "http://JOB-SERVICE/jobs";
+@FeignClient(name = "JOB-SERVICE")
+public interface JobClient {
 
-    public Map<Long, JobDto> getJobs() {
-        ResponseEntity<JobDto[]> jobs = restTemplate.getForEntity(JOB_URL, JobDto[].class);
+    @GetMapping("/jobs/{id}")
+    JobDto getJobById(@PathVariable Long id);
 
-        return Arrays.stream(Objects.requireNonNull(jobs.getBody()))
-                .collect(Collectors.toMap(JobDto::getId, Function.identity()));
-    }
-
-    public JobDto getJobById(Long jobId) {
-        ResponseEntity<JobDto> job = restTemplate.getForEntity(String.format("%s/%s", JOB_URL, jobId), JobDto.class);
-
-        return job.getBody();
-    }
+    @GetMapping("/jobs")
+    List<JobDto> getAllJobs();
 }

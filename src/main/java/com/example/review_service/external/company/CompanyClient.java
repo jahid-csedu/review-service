@@ -1,32 +1,12 @@
 package com.example.review_service.external.company;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+@FeignClient(name = "COMPANY-SERVICE")
+public interface CompanyClient {
 
-@Service
-@RequiredArgsConstructor
-public class CompanyClient {
-    private final RestTemplate restTemplate;
-    private static final String COMPANY_URL = "http://COMPANY-SERVICE/companies";
-
-    public Map<Long, CompanyDto> getCompanies() {
-        ResponseEntity<CompanyDto[]> companies = restTemplate.getForEntity(COMPANY_URL, CompanyDto[].class);
-
-        return Arrays.stream(Objects.requireNonNull(companies.getBody()))
-                .collect(Collectors.toMap(CompanyDto::getId, Function.identity()));
-    }
-
-    public CompanyDto getCompanyById(Long companyId) {
-        ResponseEntity<CompanyDto> company = restTemplate.getForEntity(String.format("%s/%s", COMPANY_URL, companyId), CompanyDto.class);
-
-        return company.getBody();
-    }
+    @GetMapping("/companies/{id}")
+    CompanyDto getCompanyById(@PathVariable Long id);
 }
