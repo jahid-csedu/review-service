@@ -7,9 +7,8 @@ import com.example.review_service.external.company.CompanyDto;
 import com.example.review_service.external.job.JobClient;
 import com.example.review_service.external.job.JobDto;
 import com.example.review_service.mapper.ReviewMapper;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import com.example.review_service.mq.ReviewEventProducer;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
-import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,10 +29,12 @@ public class ReviewService {
     private final ReviewMapper reviewMapper;
     private final CompanyClient companyClient;
     private final JobClient jobClient;
+    private final ReviewEventProducer reviewEventProducer;
 
     public Long create(ReviewDto reviewDto) {
         log.debug("Creating Review: {}", reviewDto);
         Review review = reviewRepository.save(reviewMapper.dtoToEntity(reviewDto));
+        reviewEventProducer.sendMessage(review);
         return review.getId();
     }
 
@@ -92,6 +93,16 @@ public class ReviewService {
         return Collections.emptyList();
     }
 
+
+
+    public Double findCompanyRating(Long companyId) {
+        log.info("Getting rating for company with ID: {}", companyId);
+        List<Review> companyReviews = reviewRepository.findByCompanyId(companyId);
+        return companyReviews.stream()
+                .mapToDouble(Review::getRating)
+                .average()
+                .orElse(0.0);
+    }
     private void addCompanyDetails(List<ReviewDetailDto> reviewDetailDtos, Long companyId) {
         CompanyDto company = companyClient.getCompanyById(companyId);
         reviewDetailDtos

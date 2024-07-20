@@ -47,4 +47,9 @@ public class ReviewController {
     public ResponseEntity<List<ReviewDetailDto>> getAllReviewsByCompanyId(@RequestParam(value = "companyId") Long companyId) {
         return ResponseEntity.ok(reviewService.findByCompanyId(companyId));
     }
+
+    @GetMapping("/rating")
+    public ResponseEntity<Double> getCompanyRating(@RequestParam Long companyId) {
+        return ResponseEntity.ok(reviewService.findCompanyRating(companyId));
+    }
 }
