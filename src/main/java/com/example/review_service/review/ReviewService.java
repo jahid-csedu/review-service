@@ -7,10 +7,14 @@ import com.example.review_service.external.company.CompanyDto;
 import com.example.review_service.external.job.JobClient;
 import com.example.review_service.external.job.JobDto;
 import com.example.review_service.mapper.ReviewMapper;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -64,6 +68,17 @@ public class ReviewService {
         return reviewDetailDto;
     }
 
+//    @CircuitBreaker(
+//            name = "companyBreaker",
+//            fallbackMethod = "companyBreakerFallback"
+//    )
+//    @Retry(
+//            name = "companyBreaker",
+//            fallbackMethod = "companyBreakerFallback"
+//    )
+    @RateLimiter(
+            name = "companyBreaker"
+    )
     public List<ReviewDetailDto> findByCompanyId(Long companyId) {
         List<Review> reviews = reviewRepository.findByCompanyId(companyId);
         List<ReviewDetailDto> reviewDetails = reviewMapper.entityToDetailDtoList(reviews);
@@ -71,6 +86,10 @@ public class ReviewService {
         addJobDetails(reviewDetails);
 
         return reviewDetails;
+    }
+
+    public List<String> companyBreakerFallback(Exception e) {
+        return Collections.emptyList();
     }
 
     private void addCompanyDetails(List<ReviewDetailDto> reviewDetailDtos, Long companyId) {
